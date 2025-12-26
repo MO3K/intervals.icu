@@ -1,11 +1,19 @@
 import requests
 import json
 import base64
+import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Configuration
-ATHLETE_ID = "ID"  # Replace with your athlete ID
-API_KEY = "API_KEY"        # Replace with your API key
+ATHLETE_ID = os.getenv("ATHLETE_ID")
+API_KEY = os.getenv("API_KEY")
+
+if not ATHLETE_ID or not API_KEY or ATHLETE_ID == "your_athlete_id_here" or API_KEY == "your_api_key_here":
+    raise ValueError("ATHLETE_ID and API_KEY must be set to valid values in the .env file")
 BASE_URL = "https://intervals.icu/api/v1/athlete"
 ZONE_TYPE = "HR" #"Pace"
 # Encode "API_KEY:api_key" in Base64 for the Authorization header
