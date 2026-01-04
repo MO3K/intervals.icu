@@ -35,6 +35,12 @@ def load_trainings(file_path):
 def convert_duration(duration):
     if "km" in duration:
         return float(duration.replace("km", "")) * 1000  # Convert km to meters
+    elif "m" in duration and "s" in duration:
+        # Handle combined format like "4m30s"
+        parts = duration.replace("m", " ").replace("s", "").split()
+        minutes = int(parts[0])
+        seconds = int(parts[1]) if len(parts) > 1 else 0
+        return minutes * 60 + seconds
     elif "m" in duration and not duration.endswith("km"):
         return int(duration.replace("m", "")) * 60  # Convert minutes to seconds
     elif "s" in duration:
