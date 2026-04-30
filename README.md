@@ -1,53 +1,127 @@
-# Intervals.icu
+# Intervals.icu Tools
 
-A Python/Powershell script to send training events from a JSON file to the [Intervals.icu](https://intervals.icu) API. This script automates the process of uploading training schedules for athletes.
-
-## Features
-- Uploads multiple training events in bulk to the Intervals.icu calendar.
-- Supports cycling, swimming, and running workouts.
-- Easy-to-configure JSON input file for flexible scheduling.
+Python scripts to interact with the [Intervals.icu](https://intervals.icu) API.
 
 ## Prerequisites
-- Python 3.6 or higher OR Powershell
+
+- Python 3.6+
 - An Intervals.icu account with API access
-- Your **API Key** and **Athlete ID**
+- `.env` file with your credentials (see setup below)
 
-## Installation
+## Setup
 
-1. **Clone the Repository**
+1. Clone the repository and install dependencies:
    ```bash
-   git clone https://github.com/h3xh0und/intervals.icu.git
-   cd intervals.icu
+   pip install requests python-dotenv
    ```
-4. **Configure the Script**
-   - Open the upload_trainings.py or upload_trainings.ps1 file.
-   - Replace the placeholders:
-        - your_api_key with your API key from Intervals.icu.
-        - your_athlete_id with your athlete ID.
 
-## Usage
+2. Create a `.env` file in the project root:
+   ```
+   ATHLETE_ID=your_athlete_id
+   API_KEY=your_api_key
+   ```
+   Find your Athlete ID and API key at [intervals.icu/settings](https://intervals.icu/settings).
 
-1. **Create your schedule**  
-   I made a custom GPT [Coach GPT for Intervals.icu](https://chatgpt.com/g/g-677d1b637658819198026d2a7daaa1d8-coach-gpt-for-intervals-icu) that you can use to create a trainingsplan for an event. It works like the Annual Training Plan (ATP), so you can add multiple events (A,B or C events). When your happy with the plan the GPT will ask you to generate it as a JSON. Save this file as training.json in the same directory as the script.
+---
 
-2. **Run the Script**  
-   Python
+## pull_weekly_data.py — Pull Training Data
+
+Fetches training activities from intervals.icu and saves them as structured JSON files, optimized for coaching analysis.
+
+### Output structure
+
+Each week is saved as a separate file:
+```
+intervals.icu/
+  2026/
+    week_08.json
+    week_07.json
+    ...
+```
+
+File format:
+```json
+{
+  "generated_at": "...",
+  "athlete": {
+    "lthr": 163,
+    "max_hr": 178,
+    "resting_hr": 43
+  },
+  "summary": {
+    "range": "2026-02-16 to 2026-02-22",
+    "total_distance_km": 49.99,
+    "total_duration_str": "4h 46m",
+    "activity_count": 4,
+    "workout_count": 4,
+    "total_trimp": 372,
+    "total_training_load": 189,
+    "atl_end": 28.8,
+    "ctl_end": 39.3,
+    "tsb_end": 10.5,
+    "hr_zone_distribution": { "Z1": 40.0, "Z2": 42.8, "Z3": 8.3, "Z4": 8.7, "Z5": 0.2 },
+    "avg_compliance_pct": 76.4
+  },
+  "activities": [ ... ]
+}
+```
+
+Each activity includes: date, type, name, distance, duration, pace, HR, training load, ATL/CTL/TSB, HR zones, compliance, RPE, feel, and per-lap interval detail (WORK intervals only).
+
+### Usage
+
+```bash
+# Pull current week (default)
+python pull_weekly_data.py
+
+# Pull last N weeks
+python pull_weekly_data.py --weeks 2
+python pull_weekly_data.py --weeks 4
+```
+
+### What is collected
+
+| Field | Description |
+|-------|-------------|
+| `trimp` | Training stress score (HR-based) |
+| `training_load` | intervals.icu training load |
+| `atl` / `ctl` / `tsb` | Fatigue / Fitness / Form |
+| `intensity_pct` | Workout intensity vs threshold |
+| `decoupling_pct` | Cardiac drift (HR vs pace efficiency) |
+| `hr_zones` | Time distribution across Z1–Z5 |
+| `compliance_pct` | Actual vs planned workout match |
+| `intervals` | Per-lap data: pace, HR, cadence, distance |
+
+### Notes
+
+- WeightTraining activities are excluded
+- Athlete constants (LTHR, max HR, resting HR) appear once at the top level, not repeated per activity
+- Files are organized by ISO year and week number
+
+---
+
+## upload_training.py — Upload Training Plan
+
+Uploads a training schedule from a JSON file to the Intervals.icu calendar.
+
+### Usage
+
+1. Create your training plan as `trainings.json` (see file for format reference)
+2. Run:
+   ```bash
+   python upload_training.py
    ```
-   python3 upload_trainings.py
-   ```
-   Powrshell
-   ```
-   .\upload_trainings.ps1
-   ```
-3. **Verify on Intervals.icu**
-   - Log in to your Intervals.icu account.
-   - Check the calendar for the uploaded events.
+
+### Notes
+
+- Supports cycling, swimming, and running workouts
+
+---
 
 ## Support Intervals.icu
-Make sure to subscribe to [Intervals.icu](https://intervals.icu/settings) to support the hard work David Tinker puts into maintaining this incredible tool for athletes!
 
-## Contributing
-Feel free to contribute to the project by submitting issues or pull requests. Contributions are welcome!
+Subscribe at [intervals.icu/settings](https://intervals.icu/settings) to support David Tinker's work on this incredible tool.
 
 ## License
-This project is licensed under the MIT License.
+
+MIT

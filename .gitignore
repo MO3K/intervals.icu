@@ -24,3 +24,13 @@ pip-delete-this-directory.txt
 # OS
 .DS_Store
 Thumbs.db
+
+# Pulled training data
+[0-9][0-9][0-9][0-9]/
+
+# Session cookies (contain live auth tokens — never commit)
+*.cookies.txt
+intervals.icu_cookies.txt
+
+# Derived metrics & personal health data
+metrics_history.json
