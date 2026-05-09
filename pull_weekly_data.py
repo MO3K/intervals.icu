@@ -229,6 +229,63 @@ def compute_summary(raws, date_range):
     return summary
 
 
+def extract_weight_summary(wellness_days):
+    """Most recent weight from wellness days, plus weekly change if multiple readings."""
+    weights = sorted(
+        [(d["date"], d["weight_kg"]) for d in wellness_days if "weight_kg" in d]
+    )
+    if not weights:
+        return None
+    result = {"latest_kg": weights[-1][1], "latest_date": weights[-1][0]}
+    if len(weights) >= 2:
+        result["change_kg"] = round(weights[-1][1] - weights[0][1], 1)
+    return result
+
+
+def prompt_and_upload_weight(wellness_days, week_oldest, week_newest):
+    """If no weight logged this week, prompt user and upload to Intervals.icu."""
+    import sys
+    today = datetime.now().date()
+    if not (week_oldest <= today <= week_newest):
+        return wellness_days
+    if any("weight_kg" in d for d in wellness_days):
+        return wellness_days
+    if not sys.stdin.isatty():
+        return wellness_days
+
+    print("\nВага не знайдена в даних цього тижня.")
+    raw = input("Введіть вашу вагу (кг), або Enter щоб пропустити: ").strip()
+    if not raw:
+        return wellness_days
+
+    try:
+        weight_kg = float(raw.replace(",", "."))
+    except ValueError:
+        print(f"  Неправильний формат '{raw}' — пропускаємо.")
+        return wellness_days
+
+    date_str = today.isoformat()
+    r = requests.put(
+        f"{BASE_URL}/athlete/{ATHLETE_ID}/wellness/{date_str}",
+        headers=HEADERS,
+        json={"weight": weight_kg},
+        verify=False,
+    )
+    if r.status_code in (200, 201):
+        print(f"  ✓ Вага {weight_kg} кг збережена на {date_str}")
+        for d in wellness_days:
+            if d["date"] == date_str:
+                d["weight_kg"] = weight_kg
+                break
+        else:
+            wellness_days.append({"date": date_str, "weight_kg": weight_kg})
+            wellness_days.sort(key=lambda x: x["date"])
+    else:
+        print(f"  Помилка збереження: {r.status_code} {r.text[:120]}")
+
+    return wellness_days
+
+
 # ── Interval fetch ────────────────────────────────────────────────────────────
 
 def format_interval(iv):
@@ -621,6 +678,9 @@ def update_metrics_history(entries):
                 statistics.stdev(hrv_vals) / statistics.mean(hrv_vals) * 100, 1
             )
 
+        if s.get("weight"):
+            entry["weight"] = s["weight"]
+
         # Context tags from training_context.json
         week_start = date_type.fromisocalendar(iso_year, iso_week, 1)
         week_end   = date_type.fromisocalendar(iso_year, iso_week, 7)
@@ -678,6 +738,11 @@ def main():
                     continue
                 print(f"  Refreshing wellness {fname} ({range_str})...")
                 output["wellness"] = fetch_wellness(oldest, newest)
+                weight_entry = extract_weight_summary(output["wellness"])
+                if weight_entry:
+                    output["summary"]["weight"] = weight_entry
+                elif "weight" in output.get("summary", {}):
+                    del output["summary"]["weight"]
                 with open(fpath, "w", encoding="utf-8") as f:
                     json.dump(output, f, indent=2, ensure_ascii=False)
                 week_num = int(fname[5:7])
@@ -731,6 +796,8 @@ def main():
         summary, activities = process_week(raw_acts, f"{start_dt} to {end_dt}")
         attach_intervals(activities, raw_acts)
 
+        wellness = prompt_and_upload_weight(wellness, start_dt, end_dt)
+
         output = {
             "generated_at": datetime.now().isoformat(),
             "athlete": athlete,
@@ -738,6 +805,9 @@ def main():
             "activities": activities,
             "wellness": wellness,
         }
+        weight_entry = extract_weight_summary(wellness)
+        if weight_entry:
+            output["summary"]["weight"] = weight_entry
 
         year_dir = os.path.join(PROJECT_DIR, str(iso_year))
         os.makedirs(year_dir, exist_ok=True)
@@ -748,9 +818,10 @@ def main():
         update_metrics_history([(iso_year, iso_week, output)])
 
         s = summary
+        weight_str = f" | Weight: {weight_entry['latest_kg']} kg" if weight_entry else ""
         print(f"\nSaved → {filepath}")
         print(f"  {s['activity_count']} activities | {s['total_distance_km']} km | "
-              f"{s['total_duration_str']} | TRIMP: {s['total_trimp']}")
+              f"{s['total_duration_str']} | TRIMP: {s['total_trimp']}{weight_str}")
         return
 
     # ── Mode: last N weeks ─────────────────────────────────────────────────────
@@ -790,6 +861,9 @@ def main():
         summary, activities = process_week(raw_acts, f"{mon} to {sun}")
         attach_intervals(activities, raw_acts)
 
+        if offset == 0:
+            wellness = prompt_and_upload_weight(wellness, mon, sun)
+
         output = {
             "generated_at": datetime.now().isoformat(),
             "athlete": athlete,
@@ -797,6 +871,9 @@ def main():
             "activities": activities,
             "wellness": wellness,
         }
+        weight_entry = extract_weight_summary(wellness)
+        if weight_entry:
+            output["summary"]["weight"] = weight_entry
 
         year_dir = os.path.join(PROJECT_DIR, str(iso_year))
         os.makedirs(year_dir, exist_ok=True)
@@ -805,17 +882,18 @@ def main():
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(output, f, indent=2, ensure_ascii=False)
 
-        saved.append((filepath, iso_year, iso_week, summary))
+        saved.append((filepath, iso_year, iso_week, summary, weight_entry))
         history_entries.append((iso_year, iso_week, output))
 
     if history_entries:
         update_metrics_history(history_entries)
 
     print()
-    for filepath, iso_year, iso_week, s in saved:
+    for filepath, iso_year, iso_week, s, w in saved:
+        weight_str = f" | Weight: {w['latest_kg']} kg" if w else ""
         print(f"week_{iso_week:02d}.json ({iso_year})  — {s['activity_count']} activities | "
               f"{s['total_distance_km']} km | {s['total_duration_str']} | "
-              f"TRIMP: {s['total_trimp']}")
+              f"TRIMP: {s['total_trimp']}{weight_str}")
     if saved:
         print(f"\nSaved → {os.path.join(str(saved[-1][1]), '')}")
 
