@@ -19,11 +19,27 @@ python pull_weekly_data.py --refresh-wellness       # re-fetch Garmin RHR/HRV fo
 python push_plan.py --plan {year}/week_NN_plan.json --delete-first --yes
 python push_plan.py --dry-run                       # preview, no upload
 
-# MCP server (from mcp-server/)
-uv sync && mcp run src/intervals_mcp_server/server.py
+# Post-Week Review (autofill plan.md with actual data after pulling the week)
+python review_week.py NN                            # current year
+python review_week.py 2026 NN                       # explicit year
+
+# External coach review block (run every 4 weeks)
+python review_week.py --block 18 21                 # current year W18-W21
 ```
 
-See `docs/ARCHITECTURE.md` for code internals, token cost comparison, API endpoints, and output format rules.
+Code lives in the `coach/` package. See `docs/ARCHITECTURE.md` for module layout.
+
+**Key files:**
+- `goals.json` — race target, current PRs, secondary goals
+- `thresholds.json` — LTHR/FTP test history + retest schedule
+- `training_context.json` — known events (travel, illness)
+- `docs/PERIODIZATION.md` — macro calendar (W21–W45 to HM)
+- `docs/STRENGTH_PROGRAM.md` — 2× weekly strength routine (Mon gym, Thu bodyweight)
+- `docs/THRESHOLD_TESTS.md` — LTHR/FTP test protocols
+- `docs/AI_COACH_FRAMEWORK.md` — research-backed metric framework
+- `docs/METRICS_REFERENCE.md` — formulas + thresholds
+- `docs/WORKOUT_FORMATS.md` — plan step JSON formats
+- `reviews/block_*.md` — generated external coach reports
 
 ---
 
@@ -95,10 +111,14 @@ No race anchor. Building toward HM readiness:
 | Build | 8 weeks | Threshold + longer quality | 50–60 km/wk | 50 → 60 |
 | Specific | ongoing | HM pace, race simulation | 55–65 km/wk | 60+ |
 
-3:1 load pattern — 3 progressive weeks + 1 recovery week.
+3:1 load pattern — 3 progressive weeks + 1 recovery week. Detailed macro in `docs/PERIODIZATION.md`.
 
-**Weekly structure (from W20 May 2026):**
-Mon Cycling Z2 45–60min · Tue easy/quality · **Wed Long Run** · Thu recovery · Fri Cycling Z1–Z2 35–45min (skip if legs heavy before Sat) · Sat quality · Sun REST
+**Weekly structure (from W22 May 2026):**
+Mon **AM trainer Cycling Z2 + (eat ~1h) + Gym (upper + leg prevention)** · Tue easy/quality · **Wed Long Run** · Thu recovery + **optional bodyweight core/mobility 15-20min** · Fri Cycling Z1-Z2 35-45min · Sat quality · Sun REST
+
+Strength: **1 mandatory + 1 optional** per `docs/STRENGTH_PROGRAM.md`. Mon Session A stacks on top of standard Mon trainer cycling — same routine athlete already does (trainer AM, eat, gym after). Gym block: upper body 30-40min + leg prevention 15-20min (eccentric calf raises, tibialis, single-leg work). Legs on cycling day means zero impact on Wed Long Run / Sat Tempo. Optional Session B is Thursday-only (recovery day, only slot not adjacent to quality) — core + mobility, NOT legs.
+
+**Threshold retest scheduled W23 (LTHR run) and W24 (FTP cycling)** — current values in `thresholds.json` marked STALE. All zone-based prescriptions until retest are provisional. Test protocols: `docs/THRESHOLD_TESTS.md`.
 
 ---
 
@@ -107,8 +127,14 @@ Mon Cycling Z2 45–60min · Tue easy/quality · **Wed Long Run** · Thu recover
 Stop and wait for explicit user confirmation between each step:
 
 1. **Pull** — `python pull_weekly_data.py` → read `{year}/week_NN.json` → present analysis → wait
-2. **Plan** — draft `{year}/week_NN_plan.md` (human-readable) → wait for approval
-3. **Push** — generate `{year}/week_NN_plan.json` → run `push_plan.py` → confirm results
+2. **Post-Week Review** — `python review_week.py NN` to auto-fill the just-completed week's `_plan.md` with actuals → present any compliance/decoupling issues → wait
+3. **Plan next week** — draft `{year}/week_NN_plan.md` (human-readable) referencing `docs/PERIODIZATION.md` for the current phase intent → wait for approval
+4. **Push** — generate `{year}/week_NN_plan.json` → run `push_plan.py` → confirm results
+
+**Every 4 weeks (after a recovery week):**
+- Run `python review_week.py --block <first_week> <last_week>` → saves `reviews/block_*.md`
+- Read it as a sanity check before planning the next 4-week mesocycle
+- This report is the artifact for external coach review
 
 ---
 

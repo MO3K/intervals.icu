@@ -1,0 +1,42 @@
+{
+  "primary_race": {
+    "event": "Half Marathon (TBD specific race)",
+    "target_date_range": "2026-10-15 to 2026-11-15",
+    "target_time": "1:45:00",
+    "target_pace_per_km": "4:58",
+    "stretch_time": "1:42:00",
+    "stretch_pace_per_km": "4:50",
+    "rationale": "Based on W20 (2026-05-17) snapshot: 20K training PB 1:48:25 @5:25/km (not all-out), Tempo 6km @4:33/km avg HR 153 (well below LTHR 163, controlled). Bottleneck is endurance at HM distance, not speed. Sub-1:45 target requires CTL build from 27 → 45-50 with progressive HM-pace work in Build/Specific phases.",
+    "set_at": "2026-05-17",
+    "review_at": "2026-09-01"
+  },
+  "current_personal_bests": {
+    "400m":  "1:14",
+    "1K":    "3:57",
+    "5K":    "21:38",
+    "10K":   "47:01",
+    "15K":   "1:18:25",
+    "20K":   "1:48:25",
+    "21.1K": "untested",
+    "as_of": "2026-05-09",
+    "note": "Training run times, not race times. 21.1K (HM) never raced — first race performance is part of the goal."
+  },
+  "secondary_goals": [
+    {
+      "goal": "Body weight 75 → 72 kg",
+      "rationale": "Power-to-weight for running endurance + reduces shin/calf joint load",
+      "horizon": "Gradual, 0.3-0.4 kg/month, no aggressive deficit",
+      "tracking": "summary.weight in weekly files + metrics_history.weight field"
+    },
+    {
+      "goal": "Decoupling <3% on every long run (currently <5% gate)",
+      "rationale": "Mark of well-developed aerobic base. Tighter than entry gate.",
+      "tracking": "metrics_history.avg_decoupling_easy_runs"
+    },
+    {
+      "goal": "CTL stable above 45 through Build phase",
+      "rationale": "Floor for HM-specific work without losing fitness in recovery weeks",
+      "tracking": "metrics_history.ctl_end"
+    }
+  ]
+}

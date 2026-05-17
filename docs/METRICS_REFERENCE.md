@@ -33,6 +33,17 @@ ATL_today = ATL_yesterday + (TSS_today − ATL_yesterday) × (1/7)
 TSB = CTL − ATL
 ```
 
+**CTL bands (training base):**
+
+| CTL | Base level |
+|-----|-----------|
+| <30 | Low |
+| 30–45 | Moderate |
+| 45–60 | Good |
+| >60 | High |
+
+**TSB bands (current form):**
+
 | TSB | State | Action |
 |-----|-------|--------|
 | < −30 | Overload risk | Mandatory: reduce load 3–5 days |
@@ -44,6 +55,18 @@ TSB = CTL − ATL
 - CTL ramp: max +5–7 pts/week (max +3–5 for injury-prone athletes — **Volodymyr has shin/calf history**)
 - Never let TSB < −30 for more than 5 consecutive days
 - Recovery week when TSB has been negative for 3+ consecutive weeks
+
+**Weekly TRIMP bands (Banister training impulse):**
+
+| TRIMP / week | Load level |
+|--------------|-----------|
+| <200 | Easy / recovery week |
+| 200–350 | Standard volume |
+| 350–500 | Hard week |
+| >500 | Peak load |
+
+- To maintain CTL ~35: need ~290–310 TRIMP/week
+- To raise CTL +2/week: need ~340–370 TRIMP/week
 
 ---
 

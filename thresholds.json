@@ -1,0 +1,43 @@
+{
+  "current": {
+    "lthr_bpm": 163,
+    "hr_max_bpm": 178,
+    "resting_hr_bpm": 44,
+    "ftp_cycling_w": 215,
+    "ftp_running_w": 280,
+    "css_pace_per_km": null,
+    "status": "STALE — last test date unknown, athlete reports 'давно'. All zone-based prescriptions until retest are PROVISIONAL.",
+    "source": "intervals.icu/CLAUDE.md athlete profile"
+  },
+  "retest_schedule": {
+    "next_lthr_run": {
+      "target_week": "2026-W23",
+      "target_date": "2026-06-06",
+      "protocol": "30-min all-out time trial on flat route. LTHR ≈ avg HR of last 20 min. Pre-test: 2 easy days. Substitutes Saturday Tempo session. See docs/THRESHOLD_TESTS.md",
+      "status": "scheduled"
+    },
+    "next_ftp_cycling": {
+      "target_week": "2026-W24",
+      "target_date": "2026-06-09",
+      "protocol": "20-min all-out on trainer (ERG off). FTP = avg power × 0.95. Substitutes Monday Cycling Z2. See docs/THRESHOLD_TESTS.md",
+      "status": "scheduled"
+    },
+    "frequency": "Every 8 weeks during Base/Build phases; every 6 weeks in Specific phase",
+    "next_lthr_after": "2026-W31",
+    "next_ftp_after":  "2026-W32"
+  },
+  "history": [
+    {
+      "date": "unknown (pre-2026-05)",
+      "lthr_bpm": 163,
+      "method": "unknown",
+      "note": "Values inherited from athlete profile, no test log exists"
+    }
+  ],
+  "zones_derived_from": {
+    "hr_zones": "LTHR-based, see intervals.icu/CLAUDE.md",
+    "pace_zones": "Friel-based, see intervals.icu/CLAUDE.md",
+    "power_zones_run": "Stryd default, see Stryd PowerCenter",
+    "warning": "If LTHR retest shifts >5 bpm — zones must be regenerated and CLAUDE.md updated"
+  }
+}
