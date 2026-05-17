@@ -19,23 +19,12 @@ import os
 import sys
 from pathlib import Path
 
-# ---------------------------------------------------------------------------
-# Athlete-specific HR zones (custom LTHR-based, from CLAUDE.md)
-# ---------------------------------------------------------------------------
-HR_ZONES = {
-    1: (0,   120),   # Z1: Active Recovery
-    2: (121, 132),   # Z2: Aerobic Capacity
-    3: (133, 157),   # Z3: Tempo
-    4: (158, 163),   # Z4: Threshold
-    5: (164, 178),   # Z5: VO2 Max
-}
+from coach.config import GARMIN_TOKEN_DIR, HR_ZONES
 
 # Threshold pace in sec/km — used to convert %pace values.
 # intervals.icu %pace is relative to ~60-min sustainable pace.
 # Adjust via THRESHOLD_PACE_SEC in .env if needed.
 THRESHOLD_PACE_SEC = int(os.getenv("THRESHOLD_PACE_SEC", "290"))  # default 4:50/km
-
-GARMIN_TOKEN_DIR = str(Path.home() / ".garminconnect")
 
 SPORT_TYPE_MAP = {
     "Run":         ("running",  1),
