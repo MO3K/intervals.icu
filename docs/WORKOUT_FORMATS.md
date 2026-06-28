@@ -3,8 +3,11 @@
 ## Rules (critical — apply to every workout)
 
 - **Never mix HR and Pace in the same workout.** One metric throughout, including warmup/cooldown.
+- **Never mix target metrics in the same workout.** Every step must use the same target type (`hr`, `pace`, or `power`). Do not mix targeted and untargeted steps; intervals.icu renders that as broken/misleading workout charts.
+- **Never mix step end-units in the same workout.** Use either `distance` for every step or `duration` for every step. Do not mix km warmups/cooldowns with time-based intervals; intervals.icu/Garmin parsing and compliance become unreliable.
 - **HR zone integers only:** `hr_zone` units accept integers 1–5. Zone name strings (`"Z1"`) are rejected by Pydantic.
-- **5-step structure always:** Warmup → Approach → Main → Return → Cooldown. Never collapse to 3 steps.
+- **Route envelope, not fixed step count:** quality sessions must preserve easy travel to/from the training zone, usually ~2 km approach + ~2 km return. Do not force exactly 5 steps when repeats/tests need a different structure.
+- **Convert route envelope to the main block unit:** if the main block is distance-based, approach/return are distance-based; if the main block is duration-based, convert the ~2 km approach/return into estimated easy-run duration so all steps stay duration-based.
 - **Cycling range rule:** All steady-state steps use `start`/`end` range, never a single `value`. Prevents constant watch alerts.
 - **Cycling lag buffer:** Always add 10s at 50% FTP as first step to compensate trainer inertia.
 
@@ -31,11 +34,11 @@ Use for: HM pace, threshold, intervals, sprints.
 %pace zone reference: Z1≈65%, Z2≈82%, Z3=92–97%, Z4=98–102%, Z5=103%+
 
 ```json
-{"distance": "1500", "pace": {"value": "65", "units": "%pace"}, "warmup": true, "text": "Warmup Z1"}
-{"distance": "1000", "pace": {"value": "82", "units": "%pace"}, "text": "Approach Z2"}
+{"duration": 900, "pace": {"value": "65", "units": "%pace"}, "warmup": true, "text": "Warmup Z1"}
+{"duration": 600, "pace": {"value": "82", "units": "%pace"}, "text": "Approach Z2"}
 {"duration": "1200", "pace": {"start": "92", "end": "97", "units": "%pace"}, "text": "HM pace Z3 20min"}
 {"duration": "300",  "pace": {"value": "65", "units": "%pace"}, "text": "Recovery"}
-{"distance": "1500", "pace": {"value": "65", "units": "%pace"}, "cooldown": true, "text": "Cooldown Z1"}
+{"duration": 900, "pace": {"value": "65", "units": "%pace"}, "cooldown": true, "text": "Cooldown Z1"}
 ```
 
 ---

@@ -47,8 +47,10 @@ Code lives in the `coach/` package. See `docs/ARCHITECTURE.md` for module layout
 
 **CRITICAL rules — apply to every workout:**
 - **Never mix HR and Pace in the same workout** (including warmup/cooldown)
+- **Never mix target metrics in the same workout:** all steps must use the same target type (`hr`, `pace`, or `power`). Do not mix targeted and untargeted steps. If one step has an HR target, every step needs an HR target; if one step has pace, every step needs pace.
+- **Never mix step end-units in the same workout:** all steps must be either `distance`-based or `duration`-based. Intervals.icu/Garmin parsing and compliance are unreliable with mixed km+time workouts.
 - HR zone integers only: `{"hr": {"value": 2, "units": "hr_zone"}}` — strings like `"Z2"` are rejected
-- **5-step structure always:** Warmup → Approach → Main → Return → Cooldown
+- **Route envelope, not fixed step count:** quality sessions must preserve easy travel to/from the training zone, usually ~2 km approach + ~2 km return. Do not force exactly 5 steps when the workout needs repeats, tests, or other structure.
 - Cycling: always start with 10s lag buffer at 50% FTP; use `start`/`end` range for all steady steps
 
 See `docs/WORKOUT_FORMATS.md` for full JSON examples (HR Run, Pace Run, FTP Ride).
@@ -95,9 +97,12 @@ See `docs/WORKOUT_FORMATS.md` for full JSON examples (HR Run, Pace Run, FTP Ride
 - Short intervals (<2 min), sprints, threshold/HM pace → **PACE** for all steps
 - Steady, aerobic, long run, recovery → **HR** for all steps
 
-**5-step structure:** Athlete runs to/from training spot → last 2 km (Return + Cooldown) = turn-back signal.
+**Route envelope:** Athlete runs to/from training spot → last ~2 km (Return + Cooldown) = turn-back signal.
 - Z2 run: 1km Z1 Warmup → 1km Z2 Approach → Xkm Z2 Main → 1km Z2 Return → 1km Z1 Cooldown
 - Recovery: all steps Z1
+- For workouts whose main block is distance-based, keep approach/return distance-based.
+- For workouts whose main block is duration-based, convert the ~2 km approach/return into estimated easy-run duration so all steps stay duration-based.
+- Time-based HR tests: use `duration` for every step and `hr` for every step. Use wide HR ranges for warmup/settle/cooldown if the goal is only to avoid noisy alerts.
 
 ---
 
@@ -126,10 +131,9 @@ Strength: **1 mandatory + 1 optional** per `docs/STRENGTH_PROGRAM.md`. Mon Sessi
 
 Stop and wait for explicit user confirmation between each step:
 
-1. **Pull** — `python pull_weekly_data.py` → read `{year}/week_NN.json` → present analysis → wait
-2. **Post-Week Review** — `python review_week.py NN` to auto-fill the just-completed week's `_plan.md` with actuals → present any compliance/decoupling issues → wait
-3. **Plan next week** — draft `{year}/week_NN_plan.md` (human-readable) referencing `docs/PERIODIZATION.md` for the current phase intent → wait for approval
-4. **Push** — generate `{year}/week_NN_plan.json` → run `push_plan.py` → confirm results
+1. **Pull + analyze** — `python pull_weekly_data.py` → read `{year}/week_NN.json` → **silently** run `python review_week.py NN` to auto-fill the just-completed week's `_plan.md` Post-Week Review (artifact for external coach audit, not a user-facing gate) → present ONE analysis → wait. Only surface the autofill separately if it reveals something new (compliance anomaly, decoupling flag) not already in the analysis.
+2. **Plan next week** — draft `{year}/week_NN_plan.md` (human-readable) referencing `docs/PERIODIZATION.md` for the current phase intent → wait for approval
+3. **Push** — generate `{year}/week_NN_plan.json` → run `push_plan.py` → confirm results
 
 **Every 4 weeks (after a recovery week):**
 - Run `python review_week.py --block <first_week> <last_week>` → saves `reviews/block_*.md`

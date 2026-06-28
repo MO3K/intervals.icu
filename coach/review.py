@@ -80,26 +80,77 @@ def _short_name(name):
     return n[:24]
 
 
+# HR zone lower bounds (bpm), LTHR-based — see intervals.icu/CLAUDE.md
+_HR_ZONE_LOWER = {1: 0, 2: 121, 3: 133, 4: 158, 5: 164}
+
+
+def _max_planned_hr_zone(entry):
+    """Highest HR zone integer across the planned workout's steps, or None."""
+    zmax = None
+    for st in entry.get("steps", []):
+        hr = st.get("hr")
+        if isinstance(hr, dict) and hr.get("units") == "hr_zone":
+            z = hr.get("value")
+            if isinstance(z, int):
+                zmax = z if zmax is None else max(zmax, z)
+    return zmax
+
+
+def _quality_segment_metrics(act, min_hr):
+    """avg HR + pace over the actual intervals at/above min_hr (the quality
+    block), excluding warmup/approach/return/cooldown. Returns
+    (avg_hr:int, pace_str:str, km:float) or None if no qualifying intervals."""
+    ivs = [
+        i for i in act.get("intervals", [])
+        if i.get("avg_hr") and i["avg_hr"] >= min_hr and i.get("distance_km", 0) > 0.1
+    ]
+    tot_dur = sum(i.get("duration_s", 0) for i in ivs)
+    tot_dist = sum(i["distance_km"] for i in ivs)
+    if not ivs or tot_dur <= 0 or tot_dist <= 0:
+        return None
+    hr = sum(i["avg_hr"] * i.get("duration_s", 0) for i in ivs) / tot_dur  # time-weighted
+    pace_s = tot_dur / tot_dist
+    pace_str = f"{int(pace_s // 60)}:{int(pace_s % 60):02d}/km"
+    return round(hr), pace_str, tot_dist
+
+
 def _build_review_table(planned_entries, actual_activities):
-    """Build the post-week review markdown table."""
+    """Build the post-week review markdown table.
+
+    For quality workouts (plan has a Z3+ HR step), avg HR and pace are computed
+    over the quality segment only — the whole-session figures dilute warmup/
+    cooldown into the tempo and badly misrepresent the real effort. Such rows
+    are marked with † and explained in a footnote.
+    """
     rows = _match_actual_to_planned(planned_entries, actual_activities)
 
     lines = [
         "| Тренування | План | Факт | avg HR | Темп / Ват | Decoupling | Compliance | Нотатки |",
         "|-----------|------|------|--------|-----------|------------|------------|---------|",
     ]
+    has_segment_row = False
     for entry, act in rows:
         wd = _short_weekday(entry["date"])
         name = _short_name(entry.get("name", ""))
         planned = _format_distance_or_duration(entry)
         actual = _format_actual_amount(act)
         if act:
-            avg_hr = str(act.get("avg_hr", "—"))
-            pace_or_power = act.get("pace", "")
-            if not pace_or_power and "intervals" in act:
-                powers = [i.get("avg_power_w") for i in act["intervals"] if i.get("avg_power_w")]
-                if powers:
-                    pace_or_power = f"{int(sum(powers)/len(powers))}W avg"
+            zmax = _max_planned_hr_zone(entry)
+            seg = None
+            if zmax and zmax >= 3:
+                seg = _quality_segment_metrics(act, _HR_ZONE_LOWER[zmax])
+            if seg:
+                has_segment_row = True
+                name = f"{name} †"
+                avg_hr = str(seg[0])
+                pace_or_power = seg[1]
+            else:
+                avg_hr = str(act.get("avg_hr", "—"))
+                pace_or_power = act.get("pace", "")
+                if not pace_or_power and "intervals" in act:
+                    powers = [i.get("avg_power_w") for i in act["intervals"] if i.get("avg_power_w")]
+                    if powers:
+                        pace_or_power = f"{int(sum(powers)/len(powers))}W avg"
             decoupling = act.get("decoupling_pct")
             decoupling_str = f"{decoupling:+.1f}%" if decoupling is not None else "—"
             compliance = act.get("compliance_pct")
@@ -109,6 +160,12 @@ def _build_review_table(planned_entries, actual_activities):
         lines.append(
             f"| {wd} {name} | {planned} | {actual} | {avg_hr} | {pace_or_power} | "
             f"{decoupling_str} | {compliance_str} |  |"
+        )
+    if has_segment_row:
+        lines.append("")
+        lines.append(
+            "† avg HR і темп — по якісному відрізку (Z3+), warmup/approach/return/"
+            "cooldown виключені. Decoupling лишається по всій сесії."
         )
     return "\n".join(lines)
 

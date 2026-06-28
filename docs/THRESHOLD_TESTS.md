@@ -31,27 +31,29 @@ Tests should be performed when **fresh** (after recovery week or 2 easy days), i
 
 ---
 
-## Cycling FTP Test (20-min)
+## Cycling FTP Ramp Test (1-min steps)
 
-**When:** Substitute Monday Cycling Z2. Trainer ERG mode **OFF**, manual resistance.
+**Chosen protocol (from 2026-W27):** ramp/step test, ERG mode **ON**. Picked over the 20-min all-out test because cycling is cross-training (FTP only sets Z1-Z2 power targets), the ramp is far easier to execute reliably on a smart trainer (no 20-min pacing skill needed), and it is highly repeatable. **All future FTP retests use this same ramp protocol** — ramp and 20-min estimates are NOT directly comparable, so keep one method for trend consistency.
+
+**When:** Substitute a Cycling Z2 day. Trainer ERG mode **ON** — the trainer holds each step's power; you fail when cadence collapses.
 
 **Pre-test (24-48h):**
 - 2 easy days
 - Same nutrition/hydration as run test
 
 **Protocol:**
-1. 15-min warmup ramp 50→70% FTP
-2. 5-min all-out primer
-3. 10-min easy spin (50% FTP)
-4. **20-min all-out** — steady pace, no spikes
-5. 10-min cooldown
+1. 5-min easy warmup @ 50% FTP
+2. **1-min steps, +10% FTP each minute:** 60% → 70% → 80% → ... → 170% FTP
+3. Hold normal cadence at each step until you can no longer sustain it (RPE 10), then stop
+4. 5-min cooldown
 
 **Output:**
-- **FTP ≈ avg power × 0.95** (the 5% correction extrapolates 20-min effort to 60-min sustainable)
+- **FTP ≈ 0.75 × best 1-min power** (the last fully-completed step). With FTP ~215 W, expect failure around the 130-150% steps (279-322 W).
 
 **Common pitfalls:**
-- Spike start, fade end → final FTP underestimated. Pace by perceived effort (8/10 for first 10 min, 9-10/10 last 5)
-- ERG mode locked → switches resistance dynamically, will not let you push variably. Must be OFF for honest test
+- Quitting early before true failure → FTP underestimated. Hold cadence to the genuine limit.
+- ERG mode OFF → trainer won't drive the steps. Must be ON for the ramp.
+- Comparing a ramp result against an old 20-min result → invalid, different protocols.
 
 ---
 

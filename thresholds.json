@@ -11,16 +11,16 @@
   },
   "retest_schedule": {
     "next_lthr_run": {
-      "target_week": "2026-W23",
-      "target_date": "2026-06-06",
+      "target_week": "2026-W27",
+      "target_date": "2026-07-04",
       "protocol": "30-min all-out time trial on flat route. LTHR ≈ avg HR of last 20 min. Pre-test: 2 easy days. Substitutes Saturday Tempo session. See docs/THRESHOLD_TESTS.md",
-      "status": "scheduled"
+      "status": "deferred from 2026-W23 due throat symptoms on test day"
     },
     "next_ftp_cycling": {
-      "target_week": "2026-W24",
-      "target_date": "2026-06-09",
-      "protocol": "20-min all-out on trainer (ERG off). FTP = avg power × 0.95. Substitutes Monday Cycling Z2. See docs/THRESHOLD_TESTS.md",
-      "status": "scheduled"
+      "target_week": "2026-W27",
+      "target_date": "2026-06-30",
+      "protocol": "Ramp test, ERG ON. 1-min steps +10% FTP/min (60%->170%) to failure. FTP = 0.75 × best 1-min power. Chosen 2026-W27; all future retests use ramp for trend consistency. See docs/THRESHOLD_TESTS.md",
+      "status": "scheduled (deferred from W24 due illness)"
     },
     "frequency": "Every 8 weeks during Base/Build phases; every 6 weeks in Specific phase",
     "next_lthr_after": "2026-W31",
