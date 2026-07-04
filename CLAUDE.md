@@ -60,9 +60,9 @@ See `docs/WORKOUT_FORMATS.md` for full JSON examples (HR Run, Pace Run, FTP Ride
 ## Athlete Profile
 
 **Volodymyr** · DOB 23.04.1985 · 167 cm · 75 kg (current May 2026; target 72 kg)
-- HR Max: 178 bpm · Resting HR: ~44 bpm · LTHR: 163 bpm
+- HR Max: 178 bpm · Resting HR: ~36 bpm (Garmin overnight) · LTHR: 160 bpm (retest 2026-07-04)
 - VO2 Max: ~62 ml/kg/min (Apple Watch) · ~56 ml/kg/min (Garmin)
-- Cycling FTP: 215 W · Running FTP (Stryd): 280 W
+- Cycling FTP: 196 W (ramp 2026-06-30) · Running FTP (Stryd): 280 W (stale — TT streams suggest higher)
 - Running since Sep 25, 2023 · Cycling since Jan 27, 2025
 
 **Training Personal Bests** (training runs, not races):
@@ -123,7 +123,7 @@ Mon **AM trainer Cycling Z2 + (eat ~1h) + Gym (upper + leg prevention)** · Tue 
 
 Strength: **1 mandatory + 1 optional** per `docs/STRENGTH_PROGRAM.md`. Mon Session A stacks on top of standard Mon trainer cycling — same routine athlete already does (trainer AM, eat, gym after). Gym block: upper body 30-40min + leg prevention 15-20min (eccentric calf raises, tibialis, single-leg work). Legs on cycling day means zero impact on Wed Long Run / Sat Tempo. Optional Session B is Thursday-only (recovery day, only slot not adjacent to quality) — core + mobility, NOT legs.
 
-**Threshold retest scheduled W23 (LTHR run) and W24 (FTP cycling)** — current values in `thresholds.json` marked STALE. All zone-based prescriptions until retest are provisional. Test protocols: `docs/THRESHOLD_TESTS.md`.
+**Thresholds retested W27 (2026):** LTHR 160 (30-min TT 2026-07-04, was 163) · Cycling FTP 196 (ramp 2026-06-30, was 215). LTHR shift −3 bpm (<5) → HR zone tables above unchanged. Next retests ~W31 (LTHR) / W32 (FTP). Details + history in `thresholds.json`. Test protocols: `docs/THRESHOLD_TESTS.md`.
 
 ---
 
