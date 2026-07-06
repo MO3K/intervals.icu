@@ -97,9 +97,9 @@ See `docs/WORKOUT_FORMATS.md` for full JSON examples (HR Run, Pace Run, FTP Ride
 - Short intervals (<2 min), sprints, threshold/HM pace → **PACE** for all steps
 - Steady, aerobic, long run, recovery → **HR** for all steps
 
-**Route envelope:** Athlete runs to/from training spot → last ~2 km (Return + Cooldown) = turn-back signal.
+**Route envelope:** Athlete runs to/from training spot → last ~2 km (Return + Cooldown) = turn-back signal. **Applies to EVERY run, easy and recovery included — not just the Long Run.** Always carve the Return km out of the main block (total distance unchanged); the run must end with Return + Cooldown.
 - Z2 run: 1km Z1 Warmup → 1km Z2 Approach → Xkm Z2 Main → 1km Z2 Return → 1km Z1 Cooldown
-- Recovery: all steps Z1
+- Recovery run: 1km Z1 Warmup → Xkm Z1 Recovery → 1km Z1 Return → 1km Z1 Cooldown (all Z1, but the Return km is still a separate step)
 - For workouts whose main block is distance-based, keep approach/return distance-based.
 - For workouts whose main block is duration-based, convert the ~2 km approach/return into estimated easy-run duration so all steps stay duration-based.
 - Time-based HR tests: use `duration` for every step and `hr` for every step. Use wide HR ranges for warmup/settle/cooldown if the goal is only to avoid noisy alerts.
