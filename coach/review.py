@@ -16,7 +16,7 @@ import re
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-from coach.config import HISTORY_FILE, PROJECT_DIR
+from coach.config import HISTORY_FILE, HR_ZONES, PROJECT_DIR
 
 _PROJECT = Path(PROJECT_DIR)
 _REVIEWS_DIR = _PROJECT / "reviews"
@@ -80,8 +80,8 @@ def _short_name(name):
     return n[:24]
 
 
-# HR zone lower bounds (bpm), LTHR-based — see intervals.icu/CLAUDE.md
-_HR_ZONE_LOWER = {1: 0, 2: 121, 3: 133, 4: 158, 5: 164}
+# HR zone lower bounds (bpm), derived from config.HR_ZONES (single source of truth)
+_HR_ZONE_LOWER = {z: lo for z, (lo, _hi) in HR_ZONES.items()}
 
 
 def _max_planned_hr_zone(entry):

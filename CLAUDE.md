@@ -108,13 +108,14 @@ See `docs/WORKOUT_FORMATS.md` for full JSON examples (HR Run, Pace Run, FTP Ride
 
 ## Macro training structure
 
-No race anchor. Building toward HM readiness:
+Race TBD — target window 2026-10-15 → 11-15 (W45 anchor, see `goals.json`). Building toward sub-1:45 HM:
 
-| Phase | Duration | Focus | Volume | CTL target |
-|-------|----------|-------|--------|------------|
-| Base | 8 weeks | Z1–Z2 volume, aerobic engine | 40–50 km/wk | 39 → 50 |
-| Build | 8 weeks | Threshold + longer quality | 50–60 km/wk | 50 → 60 |
-| Specific | ongoing | HM pace, race simulation | 55–65 km/wk | 60+ |
+| Phase | Weeks | Focus | Volume | CTL target |
+|-------|-------|-------|--------|------------|
+| Base | W21–W28 | Z1–Z2 volume, aerobic engine | 45–55 km/wk | 27 → ~40 |
+| Build | W29–W36 | Threshold + longer quality | 53–58 km/wk | 40 → ~48 |
+| Specific | W37–W42 | HM pace, race simulation | 55–60 km/wk | 48–50 |
+| Taper + Race | W43–W45 | Volume −25% / −50% | 40 → 28 km | 50 → 46 |
 
 3:1 load pattern — 3 progressive weeks + 1 recovery week. Detailed macro in `docs/PERIODIZATION.md`.
 
