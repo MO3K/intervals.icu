@@ -10,10 +10,18 @@ Python scripts to interact with the [Intervals.icu](https://intervals.icu) API.
 
 ## Setup
 
-1. Clone the repository and install dependencies:
+1. Clone the repository and create an isolated Python environment:
    ```bash
-   pip install requests python-dotenv
+   python3 -m venv .venv
+   .venv/bin/python -m pip install -r requirements.txt
    ```
+
+   Run the scripts through that environment, for example:
+   ```bash
+   .venv/bin/python pull_weekly_data.py
+   ```
+
+   `garminconnect` is pinned because the Garmin token-store integration uses its legacy `garth` API.
 
 2. Create a `.env` file in the project root:
    ```
