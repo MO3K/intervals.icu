@@ -57,6 +57,7 @@ class ValueUnits(Enum):
     WATTS = "w"
     PERCENT_FTP = "%ftp"
     CADENCE = "cadence"
+    PACE_SECONDS = "secs"
 
 
 def _float_to_str(value: float) -> str:
@@ -88,6 +89,9 @@ class Value:
             return f"{_float_to_str(value)}%"
         if self.units in zone:
             return f"Z{_float_to_str(value)}"
+        if self.units == ValueUnits.PACE_SECONDS:
+            seconds = int(round(float(value)))
+            return f"{seconds // 60}:{seconds % 60:02d}"
         if self.units == ValueUnits.WATTS:
             return f"{_float_to_str(value)}W"
         if self.units == ValueUnits.CADENCE:
@@ -102,7 +106,7 @@ class Value:
             return "MMP"
         if u == ValueUnits.PERCENT_LTHR:
             return "LTHR"
-        if u in (ValueUnits.PERCENT_PACE, ValueUnits.PACE_ZONE):
+        if u in (ValueUnits.PERCENT_PACE, ValueUnits.PACE_ZONE, ValueUnits.PACE_SECONDS):
             return "Pace"
         if u == ValueUnits.PERCENT_FTP:
             return "ftp"
@@ -117,8 +121,11 @@ class Value:
         pct_units = {ValueUnits.PERCENT_HR, ValueUnits.PERCENT_MMP, ValueUnits.PERCENT_LTHR,
                      ValueUnits.PERCENT_PACE, ValueUnits.PERCENT_FTP}
         if self.start is not None and self.end is not None:
-            s, e = _float_to_str(self.start), _float_to_str(self.end)
-            val += f"{s}-{e}% " if self.units in pct_units else f"{s}-{e} "
+            if self.units in pct_units:
+                val += f"{_float_to_str(self.start)}-{_float_to_str(self.end)}% "
+            else:
+                s, e = self._format_value(self.start), self._format_value(self.end)
+                val += f"{s}-{e} "
         if self.value is not None:
             val += f"{self._format_value(self.value)} "
         if self.units is not None:

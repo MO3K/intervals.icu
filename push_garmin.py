@@ -94,6 +94,30 @@ def pace_target(pct_value: float | None = None,
     }
 
 
+def pace_seconds_target(pace_value: float | None = None,
+                        pace_start: float | None = None,
+                        pace_end: float | None = None) -> dict:
+    """Return a Garmin pace target from direct seconds-per-km values."""
+    if pace_value is not None:
+        # Keep a small practical tolerance for a fixed displayed pace.
+        slower_sec, faster_sec = float(pace_value) + 3, float(pace_value) - 3
+    elif pace_start is not None and pace_end is not None:
+        slower_sec, faster_sec = max(float(pace_start), float(pace_end)), min(float(pace_start), float(pace_end))
+    else:
+        return no_target()
+
+    lo, hi = sorted([1000 / slower_sec, 1000 / faster_sec])
+    return {
+        "targetType": {
+            "workoutTargetTypeId": 6,
+            "workoutTargetTypeKey": "pace.zone",
+            "displayOrder": 6,
+        },
+        "targetValueOne": round(lo, 4),
+        "targetValueTwo": round(hi, 4),
+    }
+
+
 def no_target() -> dict:
     return {
         "targetType": {
@@ -143,6 +167,12 @@ def build_step(step_order: int, step: dict) -> dict:
                 pct_value=pace.get("value"),
                 pct_start=pace.get("start"),
                 pct_end=pace.get("end"),
+            )
+        elif pace.get("units") == "secs":
+            target = pace_seconds_target(
+                pace_value=pace.get("value"),
+                pace_start=pace.get("start"),
+                pace_end=pace.get("end"),
             )
         else:
             target = no_target()

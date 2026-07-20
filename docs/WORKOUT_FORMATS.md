@@ -33,7 +33,9 @@ Use for: HM pace, threshold, intervals, sprints.
 
 %pace zone reference: Z1≈65%, Z2≈82%, Z3=92–97%, Z4=98–102%, Z5=103%+
 
-```json
+**Precision requirement for quality blocks:** do not use broad `pace_zone` targets for a prescribed HM/threshold pace. Use **direct seconds-per-km**, which Intervals.icu parses without applying its athlete pace-zone model. Example: `{"start": 300, "end": 295, "units": "secs"}` renders as **5:00–4:55 Pace**. The renderer sends `- 5km 5:00-4:55 Pace`; verify the parsed `workout_doc` after upload. Use `start` as the slower pace (more seconds) and `end` as the faster pace.
+
+```
 {"duration": 900, "pace": {"value": "65", "units": "%pace"}, "warmup": true, "text": "Warmup Z1"}
 {"duration": 600, "pace": {"value": "82", "units": "%pace"}, "text": "Approach Z2"}
 {"duration": "1200", "pace": {"start": "92", "end": "97", "units": "%pace"}, "text": "HM pace Z3 20min"}
