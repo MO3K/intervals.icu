@@ -15,6 +15,8 @@
 ## Aerobic Decoupling
 `Decoupling% = (EF_1st_half − EF_2nd_half) / EF_1st_half × 100`
 
+**Method:** calculate the decision-useful value only on the central, steady Z2 main block. Exclude warmup, approach, return, cooldown, pauses, and any pace/interval block **unless** a segment is demonstrated by actual pace/HR/terrain to be part of the same steady load. Split the selected block into equal-duration halves, then calculate pace and HR time-weighted within each half. The activity-level decoupling reported by Intervals.icu remains useful context, but it is not the readiness gate because it includes the full workout.
+
 | Value | Meaning |
 |-------|---------|
 | <5% | Excellent aerobic base |
