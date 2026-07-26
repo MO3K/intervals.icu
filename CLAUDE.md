@@ -66,7 +66,7 @@ See `docs/WORKOUT_FORMATS.md` for full JSON examples (HR Run, Pace Run, FTP Ride
 - Running since Sep 25, 2023 · Cycling since Jan 27, 2025
 
 **Training Personal Bests** (training runs, not races):
-400m 1:14 · 1K 3:57 · 5K 21:38 · 10K 47:01 · 15K 1:18:25 · 20K 1:48:25
+400m 1:14 · 1K 3:57 · 5K 21:38 · 10K 47:01 · 15K 1:18:25 · 20K 1:48:25 · 21.1K 1:57:52 (rolling activity PB, 2026-07-22)
 
 **Running HR Zones (LTHR-based):**
 

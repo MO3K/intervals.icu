@@ -93,6 +93,20 @@ def format_activity(act):
     if act.get("interval_summary"):
         out["interval_summary"] = act["interval_summary"]
 
+    achievements = []
+    for achievement in act.get("icu_achievements") or []:
+        if not isinstance(achievement, dict):
+            continue
+        compact = {"type": achievement.get("type", "")}
+        if achievement.get("distance") is not None:
+            compact["distance_m"] = achievement["distance"]
+        if achievement.get("secs") is not None:
+            compact["duration_s"] = achievement["secs"]
+        if len(compact) > 1:
+            achievements.append(compact)
+    if achievements:
+        out["achievements"] = achievements
+
     if act.get("trainer"):
         out["trainer"] = True
     if act.get("race"):
